@@ -18,7 +18,7 @@ process:
 
 **ArgoCD** handles GitOps-based continuous delivery to Kubernetes.
 
------
+------
 
 ## 1. Project Overview
 
