@@ -2,10 +2,6 @@
 pipeline {
     agent any
 
-    options {
-        timestamps()
-    }
-
     environment {
         IMAGE_NAME = 'jenkinsfreestyle'
         CONTAINER_NAME = 'testcontainer'
