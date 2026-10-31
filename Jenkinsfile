@@ -5,7 +5,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'jenkinsfreestyle'
         CONTAINER_NAME = 'testcontainer'
-        APP_PORT = '3000'
+        APP_PORT = '3001'
     }
 
     stages {
