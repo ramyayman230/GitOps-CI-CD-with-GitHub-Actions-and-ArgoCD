@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout Source Code') {
             steps {
                 git branch: 'Master',
-                    url: 'https://github.com/abdelrahmanonline4/GitOps-CI-CD-with-GitHub-Actions-and-ArgoCD.git'
+                    url: 'https://github.com/ramyayman230/GitOps-CI-CD-with-GitHub-Actions-and-ArgoCD.git'
             }
         }
 
