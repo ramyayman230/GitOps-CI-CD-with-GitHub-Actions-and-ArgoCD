@@ -22,7 +22,7 @@ pipeline {
               changeset  'app.js'
             }
           }
-            steps{
+          steps{
                 sh '''
                  pwd
                  whoami 
