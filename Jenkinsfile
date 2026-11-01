@@ -32,6 +32,12 @@ pipeline {
         }
 
         stage ('build image'){
+          when {
+            anyOf {
+              changeset 'Dockerfile'
+              changeset  'app.js'
+            }
+          }
             steps{
                 sh '''
                 docker build -t $IMAGE_NAME:$BUILD_NUMBER .               
