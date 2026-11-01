@@ -17,7 +17,7 @@ pipeline {
 
         stage ('inpsect workspace'){
           when {
-            anyof {
+            anyOf {
               changeset 'Dockerfile'
               changeset  'app.js'
             }
