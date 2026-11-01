@@ -16,6 +16,9 @@ pipeline {
         }
 
         stage ('inpsect workspace'){
+          when {
+            branch 'Master'
+          }
             steps{
                 sh '''
                  pwd
