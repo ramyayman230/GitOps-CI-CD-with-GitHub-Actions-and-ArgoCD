@@ -17,7 +17,10 @@ pipeline {
 
         stage ('inpsect workspace'){
           when {
-            branch 'Master'
+            anyof {
+              changeset 'Dockerfile'
+              changeset  'app.js'
+            }
           }
             steps{
                 sh '''
