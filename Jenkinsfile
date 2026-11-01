@@ -1,61 +1,62 @@
-
 pipeline {
-    agent any
+  agent any 
 
-    environment {
-        IMAGE_NAME = 'jenkinsfreestyle'
-        CONTAINER_NAME = 'testcontainer'
-        APP_PORT = '3001'
-    }
+  environment {
+      IMAGE_NAME = 'jenkinfreestyle'
+      CONTAINER_NAME = 'testcontainer'
+      APP_PORT = '3001'
+  } 
 
     stages {
-        stage('Checkout Source Code') {
-            steps {
-                git branch: 'Master',
+        stage ('checkout code'){
+            steps{
+                git branch:'Master',
                     url: 'https://github.com/ramyayman230/GitOps-CI-CD-with-GitHub-Actions-and-ArgoCD.git'
-            }
+               }           
         }
 
-        stage('Inspect Workspace') {
-            steps {
+        stage ('inpsect workspace'){
+            steps{
                 sh '''
-                    pwd
-                    ls -la
-                    git rev-parse --short HEAD
+                 pwd
+                 whoami 
+                 git rev-parse --short HEAD
+                '''
+            }    
+        }
+
+        stage ('build image'){
+            steps{
+                sh '''
+                docker build -t $IMAGE_NAME:$BUILD_NUMBER .               
                 '''
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
+        stage ('deploy container'){
+            steps{
                 sh '''
-                    docker build \
-                        -t ${IMAGE_NAME}:${BUILD_NUMBER} .
+                docker rm -f ${CONTAINER_NAME} || true
+                docker run -d --name $CONTAINER_NAME -p $APP_PORT:$APP_PORT $IMAGE_NAME:$BUILD_NUMBER
+
                 '''
             }
         }
 
-        stage('Deploy Container') {
-            steps {
-                sh '''
-                    docker rm -f ${CONTAINER_NAME} || true
+        stage ('deployment complete'){
+               steps {
 
-                    docker run -d \
-                        --name ${CONTAINER_NAME} \
-                        -p ${APP_PORT}:${APP_PORT} \
-                        ${IMAGE_NAME}:${BUILD_NUMBER}
-                '''
-            }
-        }
+                  sh '''
 
-        stage('Deployment Complete') {
-            steps {
-                sh '''
-                    docker ps --filter "name=${CONTAINER_NAME}"
-                    echo "Done deployment"
-                '''
-            }
-        }
+                  docker ps --filter "name=${CONTAINER_NAME}"
+                  echo "Done deployment"
+
+                  '''
+                   
+               }
+
+               } 
+        
     }
 
     post {
@@ -68,3 +69,4 @@ pipeline {
         }
     }
 }
+
