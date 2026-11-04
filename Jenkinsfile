@@ -58,14 +58,14 @@ pipeline {
       stage ('production approval gate) {
              when {
                anyOf {
-                 changeset  'Dockerfiel'
+                 changeset  'Dockerfile'
                  changeset  'app.js'
                }
              }
              steps {
                timeout ( time: 10 , unit: 'MINUTES'){
                  input(
-                   message: 'do you approve deploying this application'
+                   message: 'do you approve deploying this application',
                    ok: 'Approve Deployment'
                  )
                }
