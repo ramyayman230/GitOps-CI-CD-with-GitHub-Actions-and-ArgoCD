@@ -65,7 +65,7 @@ pipeline {
              steps {
                timeout ( time: 10 , unit: 'MINUTES'){
                  input(
-                   message: 'do you approve deploying this application',
+                   message: 'do you approve deploying this application?',
                    ok: 'Approve Deployment'
                  )
                }
