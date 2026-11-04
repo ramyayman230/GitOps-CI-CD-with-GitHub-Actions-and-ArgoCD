@@ -55,7 +55,7 @@ pipeline {
             }
         }
 
-      stage ('production approval gate) {
+      stage ('production approval gate') {
              when {
                anyOf {
                  changeset  'Dockerfile'
