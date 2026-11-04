@@ -55,6 +55,24 @@ pipeline {
             }
         }
 
+      stage ('production approval gate) {
+             when {
+               anyOf {
+                 changeset  'Dockerfiel'
+                 changeset  'app.js'
+               }
+             }
+             steps {
+               timeout ( time: 10 , unit: 'MINUTES'){
+                 input(
+                   message: 'do you approve deploying this application'
+                   ok: 'Approve Deployment'
+                 )
+               }
+               echo 'Deployment Approved! , Continuing'
+             }
+      }
+
         stage ('deployment complete'){
                steps {
 
