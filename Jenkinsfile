@@ -1,11 +1,27 @@
 pipeline {
   agent any 
 
+
+  parameters {
+
+    choice(
+      name: 'Action',
+      choices: ['DEPLOY','ROLLBACK'],
+      description: 'please choose'
+    )
+
+    string(
+      name: 'ROLLBACK_VERSION',
+      defaultValue: '',
+      description: 'previos docker image tag'
+    )
+  }
   environment {
       IMAGE_NAME = 'jenkinfreestyle'
       CONTAINER_NAME = 'testcontainer'
       APP_PORT = '3001'
   } 
+  
 
     stages {
         stage ('checkout code'){
@@ -33,10 +49,7 @@ pipeline {
 
         stage ('build image'){
           when {
-            anyOf {
-              changeset 'Dockerfile'
-              changeset  'app.js'
-            }
+            expression { params.ACTION == 'DEPLOY'}
           }
             steps{
                 sh '''
@@ -57,10 +70,7 @@ pipeline {
 
       stage ('production approval gate') {
              when {
-               anyOf {
-                 changeset  'Dockerfile'
-                 changeset  'app.js'
-               }
+               expression { params.ACTION == 'DEPLOY'}
              }
              steps {
                timeout ( time: 10 , unit: 'MINUTES'){
@@ -73,6 +83,7 @@ pipeline {
                echo 'Deployment Approved! , Continuing'
              }
       }
+      
 
         stage ('deployment complete'){
                steps {
@@ -86,7 +97,19 @@ pipeline {
                    
                }
 
-               } 
+               }
+         stage ('Rollback'){
+           when {
+             expression (params.ACTION='ROLLBACK')
+           }
+           steps {
+             sh " " "
+             docker rm -f ${CONTAINER_NAME} || true
+             docker run -d -ti --name $CONTAINER_NAME -p $APP_PORT:$APP_PORT $IMAGE_NAME:${params.ROLLBACK_VERSION}
+
+             " " "
+           }
+         }
         
     }
 
