@@ -103,7 +103,7 @@ pipeline {
          }
          stage ('Rollback'){
            when {
-             expression (params.ACTION='ROLLBACK')
+             expression {params.ACTION =='ROLLBACK'}
            }
            steps {
              sh """
