@@ -59,6 +59,9 @@ pipeline {
         }
 
         stage ('deploy container'){
+          when {
+            expression { params.ACTION == 'DEPLOY'}
+          }
             steps{
                 sh '''
                 docker rm -f ${CONTAINER_NAME} || true
@@ -86,6 +89,9 @@ pipeline {
       
 
         stage ('deployment complete'){
+          when {
+            expression { params.ACTION == 'DEPLOY'}
+          }
                steps {
 
                   sh '''
