@@ -5,7 +5,7 @@ pipeline {
   parameters {
 
     choice(
-      name: 'Action',
+      name: 'ACTION',
       choices: ['DEPLOY','ROLLBACK'],
       description: 'please choose'
     )
@@ -106,11 +106,11 @@ pipeline {
              expression (params.ACTION='ROLLBACK')
            }
            steps {
-             sh " " "
+             sh """
              docker rm -f ${CONTAINER_NAME} || true
              docker run -d -ti --name $CONTAINER_NAME -p $APP_PORT:$APP_PORT $IMAGE_NAME:${params.ROLLBACK_VERSION}
 
-             " " "
+             """
            }
          }
         
