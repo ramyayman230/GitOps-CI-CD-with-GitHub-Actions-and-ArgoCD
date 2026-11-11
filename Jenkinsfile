@@ -33,10 +33,7 @@ pipeline {
 
         stage ('inpsect workspace'){
           when {
-            anyOf {
-              changeset 'Dockerfile'
-              changeset  'app.js'
-            }
+             expression { params.ACTION == 'DEPLOY'}
           }
           steps{
                 sh '''
@@ -51,7 +48,7 @@ pipeline {
           when {
             expression { params.ACTION == 'DEPLOY'}
           }
-            steps{
+           steps{
                 sh '''
                 docker build -t $IMAGE_NAME:$BUILD_NUMBER .               
                 '''
@@ -62,7 +59,7 @@ pipeline {
           when {
             expression { params.ACTION == 'DEPLOY'}
           }
-            steps{
+           steps{
                 sh '''
                 docker rm -f ${CONTAINER_NAME} || true
                 docker run -d --name $CONTAINER_NAME -p $APP_PORT:$APP_PORT $IMAGE_NAME:$BUILD_NUMBER
@@ -92,7 +89,7 @@ pipeline {
           when {
             expression { params.ACTION == 'DEPLOY'}
           }
-               steps {
+           steps {
 
                   sh '''
 
@@ -103,7 +100,7 @@ pipeline {
                    
                }
 
-               }
+         }
          stage ('Rollback'){
            when {
              expression (params.ACTION='ROLLBACK')
