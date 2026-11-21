@@ -1,4 +1,4 @@
-name: Docker CI Pipeline
+name: Docker CI/CD Pipeline
 
 on:
   push:
@@ -12,24 +12,22 @@ jobs:
   docker-ci:
     runs-on: [self-hosted, Linux, X64]
 
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-
     steps:
-      - name: Checkout Source Code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Build Docker Image
         run: docker build -t node-app:v1 .
 
-      - name: Run Docker Container
-        run: docker run -d --name testcontainer -p 3000:3000 node-app:v1
+      - name: Run Test Container
+        run: |
+          docker rm -f testcontainer || true
+          docker run -d --name testcontainer -p 3000:3000 node-app:v1
 
       - name: Test Container
         run: |
           sleep 10
-          docker ps
-          curl --fail http://localhost:3000
+          curl -f http://localhost:3000
 
       - name: Show Container Logs
         if: failure()
@@ -48,12 +46,27 @@ jobs:
 
       - name: Tag Docker Image
         if: success()
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker tag node-app:v1 $DOCKERHUB_USERNAME/node-app:v1
+          docker tag node-app:v1 ${{ secrets.DOCKERHUB_USERNAME }}/node-app:v1
 
       - name: Push Docker Image
         if: success()
         run: |
-          docker push $DOCKERHUB_USERNAME/node-app:v1
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-app:v1
+
+  deploy:
+    needs: docker-ci
+    runs-on: [self-hosted, Linux, X64]
+    environment: production
+
+    steps:
+      - name: Deploy Docker Container
+        run: |
+          docker rm -f production-app || true
+          docker run -d --name production-app -p 8080:3000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/node-app:v1
+
+      - name: Verify Deployment
+        run: |
+          sleep 10
+          curl -f http://localhost:8080
