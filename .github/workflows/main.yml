@@ -6,8 +6,8 @@ on:
       - Master
 
 jobs:
-  docker-build:
-    runs-on: ubuntu-latest
+  docker-ci:
+    runs-on: [self-hosted, Linux, X64]
 
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
