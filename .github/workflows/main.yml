@@ -26,6 +26,7 @@ jobs:
         run: |
           sleep 10
           docker ps
+          curl --fail http://localhost:3000
 
       - name: Show Container Logs
         if: always()
