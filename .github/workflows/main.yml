@@ -9,6 +9,9 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
 
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -31,3 +34,17 @@ jobs:
       - name: Remove Test Container
         if: always()
         run: docker rm -f testcontainer || true
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Tag Docker Image
+        run: |
+          docker tag node-app:v1 "$DOCKERHUB_USERNAME/node-app:v1"
+
+      - name: Push Docker Image
+        run: |
+          docker push "$DOCKERHUB_USERNAME/node-app:v1"
